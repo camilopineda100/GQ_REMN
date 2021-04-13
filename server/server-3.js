@@ -1,6 +1,6 @@
-const { ApolloServer, gql } = require('apollo-server')
+const express = require('express')
+const { ApolloServer, gql } = require('apollo-server-express')
 const mongoose = require('mongoose')
-
 const User = require('./models/user')
 
 const typeDefs = gql`
@@ -63,13 +63,17 @@ const server = new ApolloServer({
     resolvers
 })
 
+const app = express()
+
+server.applyMiddleware({ app })
+
 const PORT = process.env.PORT || 5000
 
 mongoose.connect(`mongodb+srv://graphqluser:testing123@cluster0.mvizr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => {
-    server.listen(PORT, () => {
+    app.listen(PORT, () => {
         console.log(`Running on PORT ${PORT}`)
     })
 }).catch((error) => {
